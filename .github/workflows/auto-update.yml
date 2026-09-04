@@ -7,7 +7,8 @@ on:
     branches:
       - for-next
   schedule:
-    - cron: "0 18 * * *"
+    - cron: "0 7 * * *"
+  workflow_dispatch:
 
 jobs:
   update-tools:
@@ -21,9 +22,15 @@ jobs:
       run: |
           git fetch origin for-next
           git merge --ff-only origin/for-next
-    - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v4
     - name: Update tools
-      run: python update-n-freeze.py
+      run: |
+        pip install packaging
+        python update-n-freeze.py
+    - name: Tools metadata
+      run: |
+        pip install -r hooks/requirements.txt
+        python hooks/tools_metadata.py
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v3.5.0
       with:
