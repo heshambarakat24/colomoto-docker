@@ -1,7 +1,10 @@
 name: PR Docker image
 
 on:
-    pull_request:
+    pull_request_target:
+      types: [opened, synchronize, reopened]
+      branches:
+        - 'for-next'
 
 jobs:
   validate:
@@ -9,22 +12,23 @@ jobs:
       IMAGE: colomoto/colomoto-docker:pr${{ github.event.pull_request.number }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-        if: github.base_ref == 'for-next'
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Tools metadata
+        run: |
+          pip install -r hooks/requirements.txt
+          python hooks/tools_metadata.py
       - name: Docker image build
-        if: github.base_ref == 'for-next'
         run: sh hooks/build
       - name: Login to docker hub
-        if: github.base_ref == 'for-next'
         uses: actions-hub/docker/login@master
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - name: Push image
-        if: github.base_ref == 'for-next'
         uses: actions-hub/docker@master
         with:
           args: push ${IMAGE}
       - name: Docker image validation
-        if: github.base_ref == 'for-next'
         run: docker run --rm $IMAGE env validate.sh
