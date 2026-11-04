@@ -1,9 +1,4 @@
-# Contributing to CoLoMoTo docker
-
-Thank you very much for considering improving the CoLoMoTo interactive notebook and its Docker distribution!
-
-This document gives some essential guidelines for helping you and us to manage your contribution.
-Do not hesitate to contact us on the CoLoMoTo mailing list (see http://colomoto.org), we will be happy to assist you.
+# Adding your tool
 
 ## General considerations
 
@@ -30,7 +25,7 @@ See the [Recipes](#Recipes) section for additional help.
 
 Before modiying the main `Dockerfile` of the project, it is more efficient to build a new Docker image which inherits from the `colomoto/colomoto-docker` image. This can be done by creating a `Dockerfile` which will looks like this:
 
-```
+```Dockerfile
 FROM colomoto/colomoto-docker:next
 
 USER root
@@ -66,6 +61,7 @@ There are 3 `RUN` sections related to conda package installation, which depend o
 * [ ] Add the demo notebook in the `tutorials` folder, in a subfolder named after your tool.
 * [ ] Include the notebook path in the `validate.sh` file.
 * [ ] Build locally the Docker image and validate it (see [Recipes](#Recipes))
+* [ ] Copy `tools/TEMPLATE.md` to `tools/your_tool.md` and complete the file
 * [ ] Create a pull request with the `tool request` label
 
 
